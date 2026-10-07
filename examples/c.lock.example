@@ -1,0 +1,9 @@
+# Example product / workspace lockfile
+# Pins tool, compiler, and modules (git SHA or tag as ref)
+
+c      0.0.6  h1:dev
+clang  19.1.7 h1:replace-me
+
+# Module pins — c sync clones into deps/<name>/
+# foo  v0.0.0  h1:replace  git+https://github.com/example/foo@v0.0.0
+# bar  abcdef0123456789abcdef0123456789abcdef01  git+https://github.com/example/bar

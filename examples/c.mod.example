@@ -1,0 +1,16 @@
+# Example consumer module manifest
+#
+# Recognized by c: module, level, freestanding, require
+# Other keys (kind, thread, alloc, …) are ignored — fine as notes.
+
+module log
+level  1
+freestanding 1
+
+require plat
+require rec
+require crc32c
+
+# kind   lib
+# thread single-writer
+# alloc  pages

@@ -1,0 +1,7 @@
+/c
+/*.o
+/.c/
+/deps/
+.DS_Store
+*.a
+*.out

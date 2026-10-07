@@ -1,0 +1,58 @@
+# Build and attach release binaries when you push a version tag (v0.0.6, …).
+#
+#   git tag v0.0.6 && git push origin v0.0.6
+#
+# Assets: c-darwin-arm64, c-darwin-amd64, c-linux-arm64, c-linux-amd64
+
+name: release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            asset: c-darwin-arm64
+          - os: macos-13
+            asset: c-darwin-amd64
+          - os: ubuntu-22.04
+            asset: c-linux-amd64
+          - os: ubuntu-22.04-arm
+            asset: c-linux-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          clang -std=c23 -O2 -Wall -Wextra -Iinclude -o "${{ matrix.asset }}" src/*.c
+          ./"${{ matrix.asset }}" version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Add install.sh to release
+        run: cp install.sh dist/install.sh && chmod +x dist/install.sh
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
